@@ -1,13 +1,49 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleLogin = () => {
-    // tu będzie logika logowania (API call)
-    console.log('Logging in with', email, password);
+  const handleLogin = async () => {
+    if (!username || !password) {
+      setError('Username and password are required');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    const formData = new URLSearchParams();
+    formData.append('username', username); 
+    formData.append('password', password);
+
+    try {
+      const response = await fetch('http://localhost:8000/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData.toString(),
+      });
+
+      setLoading(false);
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('token', data.access_token);
+        navigate('/dashboard'); // chroniony widok
+      } else {
+        const errorData = await response.json();
+        setError(errorData.detail || 'Login failed');
+      }
+    } catch (err) {
+      setLoading(false);
+      setError('Incorrect username or password');
+    }
   };
 
   return (
@@ -67,10 +103,10 @@ const Login = () => {
         </div>
 
         <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={e => setUsername(e.target.value)}
           style={{
             width: '100%',
             padding: '0.5rem',
@@ -103,6 +139,9 @@ const Login = () => {
         >
           Submit
         </button>
+        {error && (
+          <p style={{ color: 'red', marginTop: '1rem' }}>{error}</p>
+        )}
 
         <p style={{ marginTop: '3rem', fontSize: '0.9rem' }}>
           Don't have an account?{' '}
