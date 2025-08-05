@@ -32,6 +32,27 @@ const Dashboard = () => {
     }
   };
 
+  const handleDeleteResource = async (id: number) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this resource?');
+    if (!confirmDelete) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:8000/resources/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) throw new Error('Failed to delete resource');
+      setResources(resources.filter((res) => res.id !== id));
+    } catch (error) {
+      alert('Error deleting resource');
+    }
+  };
+
+
   // Sprawdzenie tokena (czy użytkownik zalogowany)
   useEffect(() => {
     const verifyToken = async () => {
@@ -74,16 +95,6 @@ const Dashboard = () => {
     fetchResources();
   }, []);
 
-
-  // // Lista zasobów
-  // const resources = [
-  //   { id: 1, name: 'Printer Paper', category: 'Office', quantity: 50, status: 'Available', dateAdded: '2025-08-01', lastUpdated: '2025-08-04' },
-  //   { id: 2, name: 'Black Ink Cartridge', category: 'Office', quantity: 3, status: 'Low Stock', dateAdded: '2025-07-30', lastUpdated: '2025-08-03' },
-  //   { id: 3, name: 'Apples', category: 'Food', quantity: 100, status: 'Available', dateAdded: '2025-08-01', lastUpdated: '2025-08-05' },
-  //   { id: 4, name: 'Milk', category: 'Food', quantity: 5, status: 'Low Stock', dateAdded: '2025-07-28', lastUpdated: '2025-08-03' },
-  //   { id: 5, name: 'Eggs', category: 'Food', quantity: 0, status: 'Out of Stock', dateAdded: '2025-07-25', lastUpdated: '2025-08-02' },
-  // ];
-
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100vw' }}>
       {/* Lewy pasek menu */}
@@ -110,7 +121,7 @@ const Dashboard = () => {
           }}
         >
           {resources.map((res) => (
-            <ResourceCard key={res.id} resource={res} onView={setSelectedResource} />
+            <ResourceCard key={res.id} resource={res} onView={setSelectedResource} onDelete={handleDeleteResource} />
           ))}
         </div>
 

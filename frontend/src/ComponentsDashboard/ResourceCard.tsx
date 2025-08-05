@@ -1,10 +1,20 @@
-const ResourceCard = ({ resource, onView }: any) => (
-  <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '1rem' }}>
-    <h3>{resource.name}</h3>
-    <p>Quantity: {resource.quantity}</p>
-    <p>Status: {resource.status}</p>
-    <button onClick={() => onView(resource)}>View</button>
-  </div>
-);
+const ResourceCard = ({ resource, onView, onDelete }: any) => {
+  return (
+    <div style={{ border: '1px solid #ccc', padding: '1rem', borderRadius: '8px' }}>
+      <h3>{resource.name}</h3>
+      <p><strong>Category:</strong> {resource.category}</p>
+      <p><strong>Status:</strong> {resource.status}</p>
+      <p><strong>Quantity:</strong> {resource.quantity}</p>
+      <div style={{ marginTop: '1rem' }}>
+        <button onClick={() => onView(resource)} style={{ marginRight: '1rem' }}>
+          View
+        </button>
+        <button onClick={() => onDelete(resource.id)} style={{ backgroundColor: 'rgba(168, 2, 2, 0.66)', color: 'white' }}>
+          Delete
+        </button>
+      </div>
+    </div>
+  );
+};
 
 export default ResourceCard;
