@@ -162,3 +162,19 @@ def delete_resource(resource_id: int, db: Session = Depends(get_db)):
     db.delete(resource)
     db.commit()
     return {"message": "Resource deleted successfully"}
+
+@app.put("/resources/{resource_id}", response_model=ResourceOut)
+def update_resource(resource_id: int, updated: ResourceCreate, db: Session = Depends(get_db)):
+    resource = db.query(Resource).filter(Resource.id == resource_id).first()
+    if not resource:
+        raise HTTPException(status_code=404, detail="Resource not found")
+
+    resource.name = updated.name
+    resource.category = updated.category
+    resource.quantity = updated.quantity
+    resource.status = updated.status
+    resource.last_updated = datetime.now(timezone.utc)
+
+    db.commit()
+    db.refresh(resource)
+    return resource

@@ -5,12 +5,15 @@ import Sidebar from '../ComponentsDashboard/Sidebar';
 import ResourceCard from '../ComponentsDashboard/ResourceCard';
 import ResourceModal from '../ComponentsDashboard/ResourceModal';
 import AddResourceModal from '../ComponentsDashboard/AddResourceModal';
+import EditResourceModal from '../ComponentsDashboard/EditResourceModal';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [selectedResource, setSelectedResource] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [resources, setResources] = useState<any[]>([]);
+  const [editingResource, setEditingResource] = useState<any>(null);
+
 
   const handleAddResource = async (newResource: any) => {
     try {
@@ -51,6 +54,28 @@ const Dashboard = () => {
       alert('Error deleting resource');
     }
   };
+
+  const handleUpdateResource = async (id: number, updatedData: any) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:8000/resources/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedData),
+      });
+
+      if (!response.ok) throw new Error('Failed to update resource');
+
+      const updated = await response.json();
+      setResources((prev) => prev.map((res) => (res.id === id ? updated : res)));
+    } catch (error) {
+      alert('Error updating resource');
+    }
+  };
+
 
 
   // Sprawdzenie tokena (czy użytkownik zalogowany)
@@ -121,7 +146,7 @@ const Dashboard = () => {
           }}
         >
           {resources.map((res) => (
-            <ResourceCard key={res.id} resource={res} onView={setSelectedResource} onDelete={handleDeleteResource} />
+            <ResourceCard key={res.id} resource={res} onView={setSelectedResource} onEdit={setEditingResource} onDelete={handleDeleteResource} />
           ))}
         </div>
 
@@ -134,6 +159,10 @@ const Dashboard = () => {
         )}
         {selectedResource && (
           <ResourceModal resource={selectedResource} onClose={() => setSelectedResource(null)} />
+        )}
+        {/* Edycja zasobu */}
+        {editingResource && (
+          <EditResourceModal resource={editingResource} onClose={() => setEditingResource(null)} onSubmit={handleUpdateResource} />
         )}
       </div>
     </div>
