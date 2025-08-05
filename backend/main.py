@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
-from models import User
+from models import User, Resource
 from database import SessionLocal, engine
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
@@ -114,3 +114,30 @@ def verify_token(token: str = Depends(oauth2_scheme)):
 async def verify_user_token(token: str):
     verify_token(token=token)
     return {"message": "Token is valid"}
+
+
+class ResourceBase(BaseModel):
+    name: str
+    category: str
+    quantity: int
+    status: str
+    date_added: str
+    last_updated: str
+
+class ResourceCreate(ResourceBase):
+    pass
+
+class ResourceOut(ResourceBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+@app.post("/resources", response_model=ResourceOut)
+def create_resource(resource: ResourceCreate, db: Session = Depends(get_db)):
+    db_resource = Resource(**resource.dict())
+    db.add(db_resource)
+    db.commit()
+    db.refresh(db_resource)
+    return db_resource
