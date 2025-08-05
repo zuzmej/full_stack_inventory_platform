@@ -8,7 +8,7 @@ from models import User, Resource
 from database import SessionLocal, engine
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-
+from typing import List
 
 
 app = FastAPI()
@@ -141,3 +141,7 @@ def create_resource(resource: ResourceCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_resource)
     return db_resource
+
+@app.get("/resources", response_model=List[ResourceOut])
+def get_resources(db: Session = Depends(get_db)):
+    return db.query(Resource).all()
