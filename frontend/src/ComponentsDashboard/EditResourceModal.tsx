@@ -24,7 +24,7 @@ const EditResourceModal = ({ resource, onClose, onSubmit }: any) => {
         <input name="name" value={formData.name} onChange={handleChange} placeholder="Name" style={{ display: 'block', margin: '0.5rem 0' }} />
         <input name="category" value={formData.category} onChange={handleChange} placeholder="Category" style={{ display: 'block', margin: '0.5rem 0' }} />
         <input name="quantity" type="number" value={formData.quantity} onChange={handleChange} placeholder="Quantity" style={{ display: 'block', margin: '0.5rem 0' }} />
-        <select name="status" onChange={handleChange} style={{ display: 'block', margin: '0.5rem 0' }}>
+        <select name="status" value={formData.status} onChange={handleChange} style={{ display: 'block', margin: '0.5rem 0' }}>
           <option>Available</option>
           <option>Low Stock</option>
           <option>Out of Stock</option>
