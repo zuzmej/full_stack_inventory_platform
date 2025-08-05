@@ -13,15 +13,12 @@ const AddResourceModal = ({ onClose, onSubmit }: { onClose: () => void, onSubmit
   };
 
   const handleSubmit = () => {
-    const today = new Date().toISOString().slice(0, 10);
     onSubmit({
-      ...form,
-      quantity: Number(form.quantity),
-      date_added: today,
-      last_updated: today,
+        ...form,
+        quantity: Number(form.quantity),
     });
     onClose();
-  };
+    };
 
   return (
     <div style={{

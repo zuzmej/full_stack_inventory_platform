@@ -121,14 +121,14 @@ class ResourceBase(BaseModel):
     category: str
     quantity: int
     status: str
-    date_added: str
-    last_updated: str
 
 class ResourceCreate(ResourceBase):
     pass
 
 class ResourceOut(ResourceBase):
     id: int
+    date_added: datetime
+    last_updated: datetime
 
     class Config:
         orm_mode = True
@@ -136,7 +136,15 @@ class ResourceOut(ResourceBase):
 
 @app.post("/resources", response_model=ResourceOut)
 def create_resource(resource: ResourceCreate, db: Session = Depends(get_db)):
-    db_resource = Resource(**resource.dict())
+    now = datetime.now(timezone.utc) 
+    db_resource = Resource(
+        name=resource.name,
+        category=resource.category,
+        quantity=resource.quantity,
+        status=resource.status,
+        date_added=now,
+        last_updated=now,
+    )
     db.add(db_resource)
     db.commit()
     db.refresh(db_resource)

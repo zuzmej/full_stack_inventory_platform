@@ -121,6 +121,9 @@ const Dashboard = () => {
             onSubmit={handleAddResource}
           />
         )}
+        {selectedResource && (
+          <ResourceModal resource={selectedResource} onClose={() => setSelectedResource(null)} />
+        )}
       </div>
     </div>
   );

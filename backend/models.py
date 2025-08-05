@@ -1,6 +1,6 @@
-from sqlalchemy import Column, Integer, String
-from database import Base
-from database import engine
+from sqlalchemy import Column, Integer, String, DateTime
+from database import Base, engine
+from datetime import datetime, timezone
 
 class User(Base):
     __tablename__ = "users"
@@ -17,8 +17,8 @@ class Resource(Base):
     category = Column(String)
     quantity = Column(Integer)
     status = Column(String)
-    date_added = Column(String)
-    last_updated = Column(String)
+    date_added = Column(DateTime, default=lambda: datetime.now(timezone.utc))  
+    last_updated = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc)) 
 
 
 User.metadata.create_all(bind=engine)
