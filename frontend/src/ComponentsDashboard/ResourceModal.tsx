@@ -6,7 +6,7 @@ const ResourceModal = ({ resource, onClose }: any) => {
   };
 
   return (
-    <div onClick={onClose} style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)' }}>
+    <div onClick={onClose} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex',  alignItems: 'center', justifyContent: 'center', }}>
       <div onClick={e => e.stopPropagation()} style={{ background: 'white', padding: '2rem', borderRadius: '8px', width: '400px', margin: 'auto' }}>
         <h2>{resource.name}</h2>
         <p><strong>Category:</strong> {resource.category}</p>
