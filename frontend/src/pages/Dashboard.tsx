@@ -91,12 +91,14 @@ const Dashboard = () => {
         return sorted.sort((a, b) => a.status.localeCompare(b.status));
       case 'status-desc':
         return sorted.sort((a, b) => b.status.localeCompare(a.status));
+      case 'category-asc':
+        return sorted.sort((a, b) => a.category.localeCompare(b.category));
+      case 'category-desc':
+        return sorted.sort((a, b) => b.category.localeCompare(a.category));
       default:
         return resources;
     }
   };
-
-
 
 
   // Sprawdzenie tokena (czy użytkownik zalogowany)
@@ -171,6 +173,8 @@ const Dashboard = () => {
               <div onClick={() => { setSortOption('quantity-desc'); setSortVisible(false); }} style={{ padding: '0.5rem', cursor: 'pointer' }}>Quantity (Descending)</div>
               <div onClick={() => { setSortOption('status-asc'); setSortVisible(false); }} style={{ padding: '0.5rem', cursor: 'pointer' }}>Status (A-Z)</div>
               <div onClick={() => { setSortOption('status-desc'); setSortVisible(false); }} style={{ padding: '0.5rem', cursor: 'pointer' }}>Status (Z-A)</div>
+              <div onClick={() => { setSortOption('category-asc'); setSortVisible(false); }} style={{ padding: '0.5rem', cursor: 'pointer' }}>Category (A-Z)</div>
+              <div onClick={() => { setSortOption('category-desc'); setSortVisible(false); }} style={{ padding: '0.5rem', cursor: 'pointer' }}>Category (Z-A)</div>
             </div>
           )}
           <button style={{ marginRight: '1rem' }}>Filter</button>
