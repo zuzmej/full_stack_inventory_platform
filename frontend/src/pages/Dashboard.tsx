@@ -15,8 +15,10 @@ const Dashboard = () => {
   const [editingResource, setEditingResource] = useState<any>(null);
   const [sortVisible, setSortVisible] = useState(false);  // czy pokazuje listę opcji sortowania
   const [sortOption, setSortOption] = useState('');
-
-
+  const categories = Array.from(new Set(resources.map((r) => r.category)));
+  const statuses = Array.from(new Set(resources.map((r) => r.status)));
+  const [filterVisible, setFilterVisible] = useState(false);  // czy pokazuje listę opcji filtrowania
+  const [filterOption, setFilterOption] = useState('');
 
   const handleAddResource = async (newResource: any) => {
     try {
@@ -79,8 +81,21 @@ const Dashboard = () => {
     }
   };
 
+  const getFilteredResources = () => {
+    let filtered = [...resources];
+
+    if (filterOption) {
+      filtered = filtered.filter(
+        (res) =>
+          res.category === filterOption || res.status === filterOption
+      );
+    }
+
+    return filtered;
+  };
+
   const getSortedResources = () => {
-    const sorted = [...resources];
+    const sorted = [...getFilteredResources()];
 
     switch (sortOption) {
       case 'quantity-asc':
@@ -96,7 +111,7 @@ const Dashboard = () => {
       case 'category-desc':
         return sorted.sort((a, b) => b.category.localeCompare(a.category));
       default:
-        return resources;
+        return sorted;
     }
   };
 
@@ -177,7 +192,61 @@ const Dashboard = () => {
               <div onClick={() => { setSortOption('category-desc'); setSortVisible(false); }} style={{ padding: '0.5rem', cursor: 'pointer' }}>Category (Z-A)</div>
             </div>
           )}
-          <button style={{ marginRight: '1rem' }}>Filter</button>
+          <button onClick={() => setFilterVisible((prev) => !prev)} style={{ marginRight: '1rem' }}>
+            Filter
+          </button>
+          {filterVisible && (
+            <div
+              style={{
+                position: 'absolute',
+                top: '2.5rem',
+                right: '10rem', // dostosuj jeśli trzeba
+                background: 'white',
+                border: '1px solid #ccc',
+                borderRadius: '5px',
+                zIndex: 10,
+                boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                padding: '0.5rem',
+              }}
+            >
+              <strong>Category:</strong>
+              {categories.map((cat) => (
+                <div
+                  key={cat}
+                  onClick={() => {
+                    setFilterOption(cat);
+                    setFilterVisible(false);
+                  }}
+                  style={{ padding: '0.25rem', cursor: 'pointer' }}
+                >
+                  {cat}
+                </div>
+              ))}
+              <strong style={{ marginTop: '0.5rem', display: 'block' }}>Status:</strong>
+              {statuses.map((stat) => (
+                <div
+                  key={stat}
+                  onClick={() => {
+                    setFilterOption(stat);
+                    setFilterVisible(false);
+                  }}
+                  style={{ padding: '0.25rem', cursor: 'pointer' }}
+                >
+                  {stat}
+                </div>
+              ))}
+              <div
+                onClick={() => {
+                  setFilterOption('');
+                  setFilterVisible(false);
+                }}
+                style={{ padding: '0.25rem', marginTop: '0.5rem', cursor: 'pointer', color: 'red' }}
+              >
+                ✕ Clear filter
+              </div>
+            </div>
+          )}
+
           <button style={{ backgroundColor: '#2c3e50', color: 'white' }} onClick={() => setShowAddModal(true)}> + Add Resource</button>
         </div>
 
