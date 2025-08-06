@@ -6,6 +6,9 @@ import ResourceCard from '../ComponentsDashboard/ResourceCard';
 import ResourceModal from '../ComponentsDashboard/ResourceModal';
 import AddResourceModal from '../ComponentsDashboard/AddResourceModal';
 import EditResourceModal from '../ComponentsDashboard/EditResourceModal';
+import SortDropdown from '../ComponentsDashboard/SortDropdown';
+import FilterDropdown from '../ComponentsDashboard/FilterDropdown';
+
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -20,6 +23,7 @@ const Dashboard = () => {
   const [filterVisible, setFilterVisible] = useState(false);  // czy pokazuje listę opcji filtrowania
   const [filterOption, setFilterOption] = useState('');
 
+  
   const handleAddResource = async (newResource: any) => {
     try {
       const token = localStorage.getItem('token');
@@ -40,6 +44,7 @@ const Dashboard = () => {
     }
   };
 
+
   const handleDeleteResource = async (id: number) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this resource?');
     if (!confirmDelete) return;
@@ -59,6 +64,7 @@ const Dashboard = () => {
       alert('Error deleting resource');
     }
   };
+
 
   const handleUpdateResource = async (id: number, updatedData: any) => {
     try {
@@ -81,6 +87,7 @@ const Dashboard = () => {
     }
   };
 
+
   const getFilteredResources = () => {
     let filtered = [...resources];
 
@@ -93,6 +100,7 @@ const Dashboard = () => {
 
     return filtered;
   };
+
 
   const getSortedResources = () => {
     const sorted = [...getFilteredResources()];
@@ -132,11 +140,13 @@ const Dashboard = () => {
     verifyToken();
   }, [navigate]);
 
+
   // Wylogowanie
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/');
   };
+
 
   useEffect(() => {
     const fetchResources = async () => {
@@ -158,6 +168,7 @@ const Dashboard = () => {
     fetchResources();
   }, []);
 
+
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100vw' }}>
       {/* Lewy pasek menu */}
@@ -168,115 +179,32 @@ const Dashboard = () => {
         <h1>Inventory Dashboard</h1>
         <hr style={{ borderTop: '3px solid #333', marginTop: '0.5rem' }} />
 
-      {/* Przyciski nad tabelą */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '2rem 0', position: 'relative' }}>
-          <button onClick={() => setSortVisible((prev) => !prev)} style={{ marginRight: '1rem' }}>
-            Sort
-          </button>
-          {sortVisible && (
-            <div style={{
-              position: 'absolute',
-              top: '2.5rem',
-              right: '5rem', // przesunięcie względem Sort
-              background: 'white',
-              border: '1px solid #ccc',
-              borderRadius: '5px',
-              zIndex: 10,
-              boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
-            }}>
-              <div onClick={() => { setSortOption('quantity-asc'); setSortVisible(false); }} style={{ padding: '0.5rem', cursor: 'pointer' }}>Quantity (Ascending)</div>
-              <div onClick={() => { setSortOption('quantity-desc'); setSortVisible(false); }} style={{ padding: '0.5rem', cursor: 'pointer' }}>Quantity (Descending)</div>
-              <div onClick={() => { setSortOption('status-asc'); setSortVisible(false); }} style={{ padding: '0.5rem', cursor: 'pointer' }}>Status (A-Z)</div>
-              <div onClick={() => { setSortOption('status-desc'); setSortVisible(false); }} style={{ padding: '0.5rem', cursor: 'pointer' }}>Status (Z-A)</div>
-              <div onClick={() => { setSortOption('category-asc'); setSortVisible(false); }} style={{ padding: '0.5rem', cursor: 'pointer' }}>Category (A-Z)</div>
-              <div onClick={() => { setSortOption('category-desc'); setSortVisible(false); }} style={{ padding: '0.5rem', cursor: 'pointer' }}>Category (Z-A)</div>
-            </div>
-          )}
-          <button onClick={() => setFilterVisible((prev) => !prev)} style={{ marginRight: '1rem' }}>
-            Filter
-          </button>
-          {filterVisible && (
-            <div
-              style={{
-                position: 'absolute',
-                top: '2.5rem',
-                right: '10rem', // dostosuj jeśli trzeba
-                background: 'white',
-                border: '1px solid #ccc',
-                borderRadius: '5px',
-                zIndex: 10,
-                boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-                padding: '0.5rem',
-              }}
-            >
-              <strong>Category:</strong>
-              {categories.map((cat) => (
-                <div
-                  key={cat}
-                  onClick={() => {
-                    setFilterOption(cat);
-                    setFilterVisible(false);
-                  }}
-                  style={{ padding: '0.25rem', cursor: 'pointer' }}
-                >
-                  {cat}
-                </div>
-              ))}
-              <strong style={{ marginTop: '0.5rem', display: 'block' }}>Status:</strong>
-              {statuses.map((stat) => (
-                <div
-                  key={stat}
-                  onClick={() => {
-                    setFilterOption(stat);
-                    setFilterVisible(false);
-                  }}
-                  style={{ padding: '0.25rem', cursor: 'pointer' }}
-                >
-                  {stat}
-                </div>
-              ))}
-              <div
-                onClick={() => {
-                  setFilterOption('');
-                  setFilterVisible(false);
-                }}
-                style={{ padding: '0.25rem', marginTop: '0.5rem', cursor: 'pointer', color: 'red' }}
-              >
-                ✕ Clear filter
-              </div>
-            </div>
-          )}
+        {/* Przyciski nad tabelą */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '2rem 0', position: 'relative' }}>
+          <button onClick={() => setSortVisible((prev) => !prev)} style={{ marginRight: '1rem' }}> Sort  </button>
+          <SortDropdown visible={sortVisible} onClose={() => setSortVisible(false)} onSelect={(option) => setSortOption(option)}  />
 
-          <button style={{ backgroundColor: '#2c3e50', color: 'white' }} onClick={() => setShowAddModal(true)}> + Add Resource</button>
+          <button onClick={() => setFilterVisible((prev) => !prev)} style={{ marginRight: '1rem' }}> Filter </button>
+          <FilterDropdown visible={filterVisible} onClose={() => setFilterVisible(false)} onSelect={(option) => setFilterOption(option)} categories={categories} statuses={statuses} />
+
+          <button style={{ backgroundColor: '#2c3e50', color: 'white' }} onClick={() => setShowAddModal(true)}> + Add Resource </button>
         </div>
-
 
         {/* Lista zasobów */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-            gap: '1.5rem',
-          }}
-        >
-          {getSortedResources().map((res) => (
-            <ResourceCard key={res.id} resource={res} onView={setSelectedResource} onEdit={setEditingResource} onDelete={handleDeleteResource} />
-          ))}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem', }} >
+          {getSortedResources().map((res) => (<ResourceCard key={res.id} resource={res} onView={setSelectedResource} onEdit={setEditingResource} onDelete={handleDeleteResource} /> ))}
         </div>
+
         {/* Modal - podgląd zasobu */}
-        {showAddModal && (
-          <AddResourceModal onClose={() => setShowAddModal(false)} onSubmit={handleAddResource} />
-        )}
-        {selectedResource && (
-          <ResourceModal resource={selectedResource} onClose={() => setSelectedResource(null)} />
-        )}
+        {showAddModal && ( <AddResourceModal onClose={() => setShowAddModal(false)} onSubmit={handleAddResource} /> )}
+          {selectedResource && ( <ResourceModal resource={selectedResource} onClose={() => setSelectedResource(null)} /> )}
+        
         {/* Edycja zasobu */}
-        {editingResource && (
-          <EditResourceModal resource={editingResource} onClose={() => setEditingResource(null)} onSubmit={handleUpdateResource} />
-        )}
+        {editingResource && ( <EditResourceModal resource={editingResource} onClose={() => setEditingResource(null)} onSubmit={handleUpdateResource} /> )}
       </div>
     </div>
   );
 };
+
 
 export default Dashboard;
