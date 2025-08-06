@@ -13,6 +13,9 @@ const Dashboard = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [resources, setResources] = useState<any[]>([]);
   const [editingResource, setEditingResource] = useState<any>(null);
+  const [sortVisible, setSortVisible] = useState(false);  // czy pokazuje listę opcji sortowania
+  const [sortOption, setSortOption] = useState('');
+
 
 
   const handleAddResource = async (newResource: any) => {
@@ -76,6 +79,24 @@ const Dashboard = () => {
     }
   };
 
+  const getSortedResources = () => {
+    const sorted = [...resources];
+
+    switch (sortOption) {
+      case 'quantity-asc':
+        return sorted.sort((a, b) => a.quantity - b.quantity);
+      case 'quantity-desc':
+        return sorted.sort((a, b) => b.quantity - a.quantity);
+      case 'status-asc':
+        return sorted.sort((a, b) => a.status.localeCompare(b.status));
+      case 'status-desc':
+        return sorted.sort((a, b) => b.status.localeCompare(a.status));
+      default:
+        return resources;
+    }
+  };
+
+
 
 
   // Sprawdzenie tokena (czy użytkownik zalogowany)
@@ -130,12 +151,32 @@ const Dashboard = () => {
         <h1>Inventory Dashboard</h1>
         <hr style={{ borderTop: '3px solid #333', marginTop: '0.5rem' }} />
 
-        {/* Przyciski nad tabelą */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '2rem 0' }}>
-          <button style={{ marginRight: '1rem' }}>Sort</button>
+      {/* Przyciski nad tabelą */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '2rem 0', position: 'relative' }}>
+          <button onClick={() => setSortVisible((prev) => !prev)} style={{ marginRight: '1rem' }}>
+            Sort
+          </button>
+          {sortVisible && (
+            <div style={{
+              position: 'absolute',
+              top: '2.5rem',
+              right: '5rem', // przesunięcie względem Sort
+              background: 'white',
+              border: '1px solid #ccc',
+              borderRadius: '5px',
+              zIndex: 10,
+              boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+            }}>
+              <div onClick={() => { setSortOption('quantity-asc'); setSortVisible(false); }} style={{ padding: '0.5rem', cursor: 'pointer' }}>Quantity (Ascending)</div>
+              <div onClick={() => { setSortOption('quantity-desc'); setSortVisible(false); }} style={{ padding: '0.5rem', cursor: 'pointer' }}>Quantity (Descending)</div>
+              <div onClick={() => { setSortOption('status-asc'); setSortVisible(false); }} style={{ padding: '0.5rem', cursor: 'pointer' }}>Status (A-Z)</div>
+              <div onClick={() => { setSortOption('status-desc'); setSortVisible(false); }} style={{ padding: '0.5rem', cursor: 'pointer' }}>Status (Z-A)</div>
+            </div>
+          )}
           <button style={{ marginRight: '1rem' }}>Filter</button>
           <button style={{ backgroundColor: '#2c3e50', color: 'white' }} onClick={() => setShowAddModal(true)}> + Add Resource</button>
         </div>
+
 
         {/* Lista zasobów */}
         <div
@@ -145,17 +186,13 @@ const Dashboard = () => {
             gap: '1.5rem',
           }}
         >
-          {resources.map((res) => (
+          {getSortedResources().map((res) => (
             <ResourceCard key={res.id} resource={res} onView={setSelectedResource} onEdit={setEditingResource} onDelete={handleDeleteResource} />
           ))}
         </div>
-
         {/* Modal - podgląd zasobu */}
         {showAddModal && (
-          <AddResourceModal
-            onClose={() => setShowAddModal(false)}
-            onSubmit={handleAddResource}
-          />
+          <AddResourceModal onClose={() => setShowAddModal(false)} onSubmit={handleAddResource} />
         )}
         {selectedResource && (
           <ResourceModal resource={selectedResource} onClose={() => setSelectedResource(null)} />
