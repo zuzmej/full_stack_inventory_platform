@@ -11,7 +11,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 
 
-app = FastAPI()
+app = FastAPI(
+    title="Inventory Platform API",
+    description="REST API for managing inventory resources. Includes user authentication and resource CRUD.",
+    version="1.0.0"
+)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -57,7 +61,7 @@ def create_user(db: Session, user: UserCreate):
     db.commit()
     return "complete"
 
-@app.post("/register")
+@app.post("/register", summary="Register a new user", tags=["Auth"])
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
     db_user = get_user_by_username(db, username=user.username)
     if db_user:
@@ -84,7 +88,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-@app.post("/token")
+@app.post("/token", summary="Login and receive JWT token", tags=["Auth"])
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = authenticate_user(form_data.username, form_data.password, db)
     if not user:
@@ -110,7 +114,7 @@ def verify_token(token: str = Depends(oauth2_scheme)):
     except JWTError:
         raise HTTPException(status_code=403, detail="Token is invalid or expired")
 
-@app.get("/verify-token/{token}")
+@app.get("/verify-token/{token}", summary="Verify JWT token", tags=["Auth"])
 async def verify_user_token(token: str):
     verify_token(token=token)
     return {"message": "Token is valid"}
@@ -134,7 +138,7 @@ class ResourceOut(ResourceBase):
         orm_mode = True
 
 
-@app.post("/resources", response_model=ResourceOut)
+@app.post("/resources", response_model=ResourceOut, summary="Create a new resource", description="Create a new resource in the inventory.", tags=["Resources"], dependencies=[Depends(verify_token)])
 def create_resource(resource: ResourceCreate, db: Session = Depends(get_db)):
     now = datetime.now(timezone.utc) 
     db_resource = Resource(
@@ -150,11 +154,11 @@ def create_resource(resource: ResourceCreate, db: Session = Depends(get_db)):
     db.refresh(db_resource)
     return db_resource
 
-@app.get("/resources", response_model=List[ResourceOut])
+@app.get("/resources", response_model=List[ResourceOut], summary="Get all resources", description="Retrieve all inventory resources.", tags=["Resources"], dependencies=[Depends(verify_token)])
 def get_resources(db: Session = Depends(get_db)):
     return db.query(Resource).all()
 
-@app.delete("/resources/{resource_id}")
+@app.delete("/resources/{resource_id}", summary="Delete a resource", description="Delete a specific resource by ID.", tags=["Resources"], dependencies=[Depends(verify_token)])
 def delete_resource(resource_id: int, db: Session = Depends(get_db)):
     resource = db.query(Resource).filter(Resource.id == resource_id).first()
     if resource is None:
@@ -163,7 +167,7 @@ def delete_resource(resource_id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Resource deleted successfully"}
 
-@app.put("/resources/{resource_id}", response_model=ResourceOut)
+@app.put("/resources/{resource_id}", response_model=ResourceOut, summary="Update a resource", description="Update the details of a specific resource by ID.", tags=["Resources"], dependencies=[Depends(verify_token)])
 def update_resource(resource_id: int, updated: ResourceCreate, db: Session = Depends(get_db)):
     resource = db.query(Resource).filter(Resource.id == resource_id).first()
     if not resource:
