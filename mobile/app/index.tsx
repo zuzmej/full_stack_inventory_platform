@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -35,6 +36,7 @@ export default function LoginScreen() {
 
       if (response.ok) {
         const data = await response.json();
+        await AsyncStorage.setItem('token', data.access_token);
         router.push('/dashboard');
       } else {
         const errorData = await response.json();
