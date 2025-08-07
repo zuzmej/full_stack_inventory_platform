@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, KeyboardAvoidingView, Platform, ScrollView, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -49,41 +49,56 @@ export default function LoginScreen() {
   };
 
   return (
-    <ImageBackground
-      source={require('../assets/images/background_main.jpg')}
-      style={styles.background}
+    <View style={{ flex: 1 }}>
+      <ImageBackground
+        source={require('../assets/images/background_main.jpg')}
+        style={styles.background}
+      />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.keyboardContainer}
     >
-      <Text style={styles.title}>Inventory Platform for XYZ</Text>
-      <View style={styles.form}>
-        <Text style={styles.header}>Log in</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Username"
-          value={username}
-          onChangeText={setUsername}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-        <TouchableOpacity onPress={handleLogin} style={styles.button}>
-          <Text style={styles.buttonText}>{loading ? 'Loading...' : 'Submit'}</Text>
-        </TouchableOpacity>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Text style={styles.title}>Inventory Platform for XYZ</Text>
 
-        {error ? <Text style={styles.error}>{error}</Text> : null}
+        <View style={styles.form}>
+          <Text style={styles.header}>Log in</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Username"
+            value={username}
+            onChangeText={setUsername}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+          <TouchableOpacity onPress={handleLogin} style={styles.button}>
+            <Text style={styles.buttonText}>{loading ? 'Loading...' : 'Submit'}</Text>
+          </TouchableOpacity>
 
-        <Text style={styles.register}>
-          Don't have an account?{' '}
-          <Text style={styles.registerLink} onPress={() => router.push('/register')}>
-            Register here
+          {error ? <Text style={styles.error}>{error}</Text> : null}
+
+          <Text style={styles.register}>
+            Don't have an account?{' '}
+            <Text style={styles.registerLink} onPress={() => router.push('/register')}>
+              Register here
+            </Text>
           </Text>
-        </Text>
-      </View>
-    </ImageBackground>
-  );
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
+  </View>
+);
+
 }
 
 const styles = StyleSheet.create({
@@ -92,10 +107,12 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',
+    ...StyleSheet.absoluteFillObject,
   },
+
   title: {
     color: 'black',
-    fontSize: 32,
+    fontSize: 38,
     fontWeight: 'bold',
     marginBottom: 40,
     textAlign: 'center',
@@ -145,4 +162,15 @@ const styles = StyleSheet.create({
   registerLink: {
     color: '#0077cc',
   },
+  keyboardContainer: {
+  flex: 1,
+  justifyContent: 'center',
+},
+
+scrollContainer: {
+  flexGrow: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+  paddingVertical: 40,
+},
 });
