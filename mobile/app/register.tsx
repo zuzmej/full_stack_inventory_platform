@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import {View, Text, TextInput, Button, StyleSheet, ActivityIndicator, ImageBackground, TouchableOpacity,} from 'react-native';
+import {View, Text, TextInput, Button, StyleSheet, ActivityIndicator, ImageBackground, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Keyboard, TouchableWithoutFeedback
+} from 'react-native';
 import { useRouter } from 'expo-router';
 
 const Register = () => {
@@ -47,57 +48,71 @@ const Register = () => {
     }
   };
 
+
   return (
-    <ImageBackground
-      source={require('../assets/images/background_main2.jpg')}
-      style={styles.background}
-      resizeMode="cover"
-    >
-      <View style={styles.container}>
-        <Text style={styles.title}>Inventory Platform for XYZ</Text>
+    <View style={{ flex: 1 }}>
+      <ImageBackground
+        source={require('../assets/images/background_main2.jpg')}
+        style={styles.background}
+        resizeMode="cover"
+      />
 
-        <View style={styles.form}>
-          <Text style={styles.heading}>Register</Text>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.keyboardContainer}
+        >
+          <ScrollView
+            contentContainerStyle={styles.scrollContainer}
+            keyboardShouldPersistTaps="handled"
+          >
+            <Text style={styles.title}>Inventory Platform for XYZ</Text>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Username"
-            value={username}
-            onChangeText={setUsername}
-            placeholderTextColor="#999"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-            placeholderTextColor="#999"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Confirm password"
-            secureTextEntry
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            placeholderTextColor="#999"
-          />
-          {loading ? (
-            <ActivityIndicator size="large" color="#000" />
-          ) : (
-            <Button title="Submit" onPress={handleRegister} />
-          )}
+            <View style={styles.form}>
+              <Text style={styles.header}>Register</Text>
 
-          {error ? <Text style={styles.error}>{error}</Text> : null}
+              <TextInput
+                style={styles.input}
+                placeholder="Username"
+                value={username}
+                onChangeText={setUsername}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                secureTextEntry
+                value={password}
+                onChangeText={setPassword}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Confirm password"
+                secureTextEntry
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+              />
 
-          <TouchableOpacity onPress={() => router.replace('/')}>
-            <Text style={styles.loginLink}>
-              Already have an account? Log in here
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </ImageBackground>
+              {loading ? (
+                <ActivityIndicator size="large" color="#000" />
+              ) : (
+                <TouchableOpacity onPress={handleRegister} style={styles.button}>
+                  <Text style={styles.buttonText}>Submit</Text>
+                </TouchableOpacity>
+              )}
+
+              {error ? <Text style={styles.error}>{error}</Text> : null}
+
+              <TouchableOpacity onPress={() => router.replace('/')}>
+                <Text style={styles.login}>
+                  Already have an account?{' '}
+                  <Text style={styles.loginLink}>Log in here</Text>
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+    </View>
   );
 };
 
@@ -106,55 +121,75 @@ export default Register;
 const styles = StyleSheet.create({
   background: {
     flex: 1,
+    resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',
+    ...StyleSheet.absoluteFillObject,
   },
-  container: {
-    paddingHorizontal: 20,
+  keyboardContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
+    paddingHorizontal: 20,
   },
   title: {
-    fontSize: 28,
-    color: '#000',
+    color: 'black',
+    fontSize: 38,
     fontWeight: 'bold',
-    marginBottom: 40,
+    marginBottom: 25,
     textAlign: 'center',
   },
   form: {
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    backgroundColor: 'rgba(255,255,255,0.9)',
     padding: 20,
-    borderRadius: 8,
+    borderRadius: 10,
     width: '90%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
+    alignItems: 'center',
   },
-  heading: {
-    fontSize: 24,
+  header: {
+    fontSize: 28,
+    marginBottom: 20,
     fontWeight: 'bold',
     color: '#333',
-    textAlign: 'center',
-    marginBottom: 20,
   },
   input: {
-    backgroundColor: '#fff',
-    padding: 12,
-    borderRadius: 5,
-    marginBottom: 10,
-    borderColor: '#ccc',
+    width: '100%',
+    padding: 10,
+    marginVertical: 8,
     borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 6,
+  },
+  button: {
+    backgroundColor: '#333',
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    marginTop: 10,
+    borderRadius: 6,
+    width: '100%',
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
   error: {
     color: 'red',
-    textAlign: 'center',
     marginTop: 10,
+    textAlign: 'center',
+  },
+  login: {
+    marginTop: 30,
+    fontSize: 12,
+    textAlign: 'center',
+    color: '#333',
   },
   loginLink: {
-    marginTop: 20,
-    textAlign: 'center',
     color: '#0077cc',
+    fontWeight: 'bold',
   },
 });

@@ -98,7 +98,6 @@ export default function LoginScreen() {
     </TouchableWithoutFeedback>
   </View>
 );
-
 }
 
 const styles = StyleSheet.create({
@@ -163,14 +162,13 @@ const styles = StyleSheet.create({
     color: '#0077cc',
   },
   keyboardContainer: {
-  flex: 1,
-  justifyContent: 'center',
-},
-
-scrollContainer: {
-  flexGrow: 1,
-  justifyContent: 'center',
-  alignItems: 'center',
-  paddingVertical: 40,
-},
+    flex: 1,
+    justifyContent: 'center',
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
 });
