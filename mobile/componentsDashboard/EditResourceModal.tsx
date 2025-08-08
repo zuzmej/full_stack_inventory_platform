@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {Modal, View, Text, TextInput, Button, StyleSheet, TouchableWithoutFeedback, Keyboard,} from 'react-native';
+import {Modal, View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard,} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
 const EditResourceModal = ({
@@ -49,13 +49,17 @@ const EditResourceModal = ({
   return (
     <Modal
       visible={!!resource}
-      animationType="slide"
+      animationType="fade"
       transparent
       onRequestClose={onClose}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.overlay}>
           <View style={styles.modal}>
+            <TouchableOpacity style={styles.closeIcon} onPress={onClose}>
+              <Text style={styles.closeText}>×</Text>
+            </TouchableOpacity>
+
             <Text style={styles.title}>Edit Resource</Text>
 
             <TextInput
@@ -90,12 +94,12 @@ const EditResourceModal = ({
                 <Picker.Item label="Out of Stock" value="Out of Stock" />
               </Picker>
             </View>
-
-            <View style={styles.buttonRow}>
-              <Button title="Save" onPress={handleSubmit} />
-              <View style={{ width: 10 }} />
-              <Button title="Cancel" onPress={onClose} color="#999" />
+            <View style={styles.buttonWrapper}>
+              <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                <Text style={styles.buttonText}>Save</Text>
+              </TouchableOpacity>
             </View>
+
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -138,9 +142,32 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     overflow: 'hidden',
   },
-  buttonRow: {
+  buttonWrapper: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 10,
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  button: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 6,
+    borderWidth: 1,
+    marginHorizontal: 5,
+    borderColor: '#ccc',
+    alignItems: 'center',
+  },
+  buttonText: {
+    fontWeight: 'bold',
+  },
+  closeIcon: {
+    position: 'absolute',
+    right: 15,
+    zIndex: 1,
+    padding: 5,
+  },
+  closeText: {
+    fontSize: 24,
+    fontWeight: 'bold',
   },
 });

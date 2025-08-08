@@ -1,5 +1,4 @@
-import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 const ResourceCard = ({
   resource,
@@ -20,19 +19,15 @@ const ResourceCard = ({
       <Text><Text style={styles.label}>Quantity:</Text> {resource.quantity}</Text>
 
       <View style={styles.buttonRow}>
-        <View style={styles.buttonWrapper}>
-          <Button title="View" onPress={() => onView(resource)} />
-        </View>
-        <View style={styles.buttonWrapper}>
-          <Button title="Edit" onPress={() => onEdit(resource)} />
-        </View>
-        <View style={styles.buttonWrapper}>
-          <Button
-            title="Delete"
-            onPress={() => onDelete(resource.id)}
-            color="#a80202"
-          />
-        </View>
+        <TouchableOpacity style={styles.button} onPress={() => onView(resource)}>
+          <Text style={styles.buttonText}>View</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => onEdit(resource)}>
+          <Text style={styles.buttonText}>Edit</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.deleteButton} onPress={() => onDelete(resource.id)}>
+          <Text style={styles.deleteButtonText}>Delete</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -62,8 +57,32 @@ const styles = StyleSheet.create({
     marginTop: 12,
     justifyContent: 'space-between',
   },
-  buttonWrapper: {
-    flex: 1,
+  button: {
+    backgroundColor: '#2c3e50',
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
     marginHorizontal: 4,
+    flex: 1,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  deleteButton: {
+    backgroundColor: 'rgba(168, 2, 2, 0.66)',
+    borderRadius: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginHorizontal: 4,
+    flex: 1,
+    alignItems: 'center',
+  },
+  deleteButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });

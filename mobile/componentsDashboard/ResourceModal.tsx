@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, View, Text, Button, StyleSheet, TouchableWithoutFeedback, Keyboard,} from 'react-native';
+import {Modal, View, Text, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard,} from 'react-native';
 
 const ResourceModal = ({
   resource,
@@ -34,8 +34,11 @@ const ResourceModal = ({
             <Text><Text style={styles.label}>Last Updated:</Text> {formatDate(resource.last_updated)}</Text>
 
             <View style={styles.buttonWrapper}>
-              <Button title="Close" onPress={onClose} />
+              <TouchableOpacity style={styles.button} onPress={onClose}>
+                <Text style={styles.buttonText}>Close</Text>
+              </TouchableOpacity>
             </View>
+
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -69,5 +72,17 @@ const styles = StyleSheet.create({
   },
   buttonWrapper: {
     marginTop: 20,
+  },
+  button: {
+  paddingVertical: 10,
+  paddingHorizontal: 15,
+  borderRadius: 6,
+  borderWidth: 1,
+  marginHorizontal: 5,
+  borderColor: '#ccc',
+  alignItems: 'center',
+  },
+  buttonText: {
+    fontWeight: 'bold',
   },
 });

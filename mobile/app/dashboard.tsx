@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {View, Text, Button, StyleSheet, ScrollView, Alert, TouchableOpacity, Modal} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity, Modal} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 
@@ -162,49 +162,69 @@ const DashboardScreen = () => {
     }
   };
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Inventory Dashboard</Text>
-        <Button title="Logout" onPress={handleLogout} />
-      </View>
-
-      <View style={styles.buttonRow}>
-        <Button title="Sort" onPress={() => setSortVisible(!sortVisible)} />
-        <Button title="Filter" onPress={() => setFilterVisible(!filterVisible)} />
-        <Button title="+ Add" onPress={() => setShowAddModal(true)} />
-      </View>
-
-      {sortVisible && (
-        <SortDropdown visible onClose={() => setSortVisible(false)} onSelect={setSortOption} />
-      )}
-      {filterVisible && (
-        <FilterDropdown
-          visible
-          onClose={() => setFilterVisible(false)}
-          onSelect={setFilterOption}
-          categories={categories}
-          statuses={statuses}
-        />
-      )}
-
-      <ScrollView style={styles.resourceList}>
-        {getSortedResources().map((res) => (
-          <ResourceCard
-            key={res.id}
-            resource={res}
-            onView={setSelectedResource}
-            onEdit={setEditingResource}
-            onDelete={handleDeleteResource}
-          />
-        ))}
-      </ScrollView>
-
-      <AddResourceModal visible={showAddModal} onClose={() => setShowAddModal(false)} onSubmit={handleAddResource} />
-      <ResourceModal resource={selectedResource} onClose={() => setSelectedResource(null)} />
-      <EditResourceModal resource={editingResource} onClose={() => setEditingResource(null)} onSubmit={handleUpdateResource} />
+return (
+  <View style={styles.container}>
+    <View style={styles.headerContainer}>
+      <Text style={styles.title}>Inventory Dashboard</Text>
+      <View style={styles.separator} />
     </View>
-  );
+
+    <View style={styles.buttonRow}>
+      <TouchableOpacity style={styles.button} onPress={() => setSortVisible(!sortVisible)}>
+        <Text style={styles.buttonText}>Sort</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => setFilterVisible(!filterVisible)}>
+        <Text style={styles.buttonText}>Filter</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.addButton} onPress={() => setShowAddModal(true)}>
+        <Text style={styles.addButtonText}>+ Add</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={handleLogout}>
+        <Text style={styles.buttonText}>Logout</Text>
+      </TouchableOpacity>
+    </View>
+
+    {sortVisible && (
+      <SortDropdown visible onClose={() => setSortVisible(false)} onSelect={setSortOption} />
+    )}
+    {filterVisible && (
+      <FilterDropdown
+        visible
+        onClose={() => setFilterVisible(false)}
+        onSelect={setFilterOption}
+        categories={categories}
+        statuses={statuses}
+      />
+    )}
+
+    <ScrollView style={styles.resourceList}>
+      {getSortedResources().map((res) => (
+        <ResourceCard
+          key={res.id}
+          resource={res}
+          onView={setSelectedResource}
+          onEdit={setEditingResource}
+          onDelete={handleDeleteResource}
+        />
+      ))}
+    </ScrollView>
+
+    <AddResourceModal
+      visible={showAddModal}
+      onClose={() => setShowAddModal(false)}
+      onSubmit={handleAddResource}
+    />
+    <ResourceModal
+      resource={selectedResource}
+      onClose={() => setSelectedResource(null)}
+    />
+    <EditResourceModal
+      resource={editingResource}
+      onClose={() => setEditingResource(null)}
+      onSubmit={handleUpdateResource}
+    />
+  </View>
+);
 };
 
 export default DashboardScreen;
@@ -223,7 +243,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    color: '#2c3e50',
   },
   buttonRow: {
     flexDirection: 'row',
@@ -232,5 +253,44 @@ const styles = StyleSheet.create({
   },
   resourceList: {
     flex: 1
-  }
+  },
+  headerContainer: {
+  marginBottom: 10,
+  marginTop: 20,
+  alignItems: 'center',
+  },
+
+  separator: {
+    width: '100%',
+    height: 3,
+    backgroundColor: '#333',
+    marginTop: 8,
+    marginBottom: 12,
+  },
+
+  button: {
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 6,
+    borderWidth: 1,
+    marginHorizontal: 5,
+    borderColor: '#ccc'
+  },
+
+  buttonText: {
+    fontWeight: 'bold',
+  },
+
+  addButton: {
+    backgroundColor: '#2c3e50',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 6,
+    marginHorizontal: 5,
+  },
+
+  addButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
 });

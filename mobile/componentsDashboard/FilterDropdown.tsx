@@ -46,7 +46,7 @@ const FilterDropdown = ({
             ))}
 
             <TouchableOpacity onPress={() => handleSelect('')}>
-              <Text style={[styles.option, { color: 'red', marginTop: 10 }]}>✕ Clear filter</Text>
+              <Text style={[styles.option, { color: 'rgba(168, 2, 2, 0.66)', marginTop: 10 }]}>✕ Clear filter</Text>
             </TouchableOpacity>
           </ScrollView>
         </View>
