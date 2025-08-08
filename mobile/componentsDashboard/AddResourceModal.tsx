@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Modal, View, Text, TextInput, Button, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Keyboard} from 'react-native';
+import {Modal, View, Text, TextInput, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
 const AddResourceModal = ({
